@@ -1,0 +1,72 @@
+﻿@page "/contact-details"
+@page "/contact-details/{id:int}"
+@inject IContactService _contactService
+@inject NavigationManager _navigationManager
+
+<h3 class="my-3 mx-auto text-center">Contact Details</h3>
+
+@if(contact == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenTemplateForm Data="@contact">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="">First Name</label>
+                <RadzenTextBox class="form-control" @bind-Value="contact.FirstName" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="">Last Name</label>
+                <RadzenTextBox class="form-control" @bind-Value="contact.LastName" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="">Phone</label>
+                <RadzenTextBox class="form-control" @bind-Value="contact.Phone" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="">Address</label>
+                <RadzenTextArea class="form-control" @bind-Value="contact.Address" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-3 text-center">
+                <RadzenButton Text="Save" ButtonStyle="ButtonStyle.Success" Click="@(args => Save())" />
+                <RadzenButton Text="Cancel" ButtonStyle="ButtonStyle.Secondary" Click="@(args => NavigateHome())" />
+            </div>
+        </div>
+    </RadzenTemplateForm>
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    public Contact contact;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id == 0)
+            contact = new Contact();
+        else
+            contact = await _contactService.GetContactDetails(Id);
+    }
+
+    protected async Task Save()
+    {
+        await _contactService.SaveContact(contact);
+        _navigationManager.NavigateTo("/");
+    }
+
+    private void NavigateHome()
+    {
+        _navigationManager.NavigateTo("/");
+    }
+
+}

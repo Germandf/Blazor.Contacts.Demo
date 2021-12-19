@@ -1,0 +1,68 @@
+﻿@page "/contact-delete/{id:int}"
+@inject IContactService _contactService
+@inject NavigationManager _navigationManager
+
+<h3 class="my-3 mx-auto text-center">Contact Delete</h3>
+
+@if(contact == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenTemplateForm Data="@contact">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="">First Name</label>
+                <RadzenTextBox class="form-control" @bind-Value="contact.FirstName" Disabled="true" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="">Last Name</label>
+                <RadzenTextBox class="form-control" @bind-Value="contact.LastName" Disabled="true" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="">Phone</label>
+                <RadzenTextBox class="form-control" @bind-Value="contact.Phone" Disabled="true" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="">Address</label>
+                <RadzenTextArea class="form-control" @bind-Value="contact.Address" Disabled="true" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-3 text-center">
+                <RadzenButton Text="Delete" ButtonStyle="ButtonStyle.Danger" Click="@(args => Delete())" />
+                <RadzenButton Text="Cancel" ButtonStyle="ButtonStyle.Secondary" Click="@(args => NavigateHome())" />
+            </div>
+        </div>
+    </RadzenTemplateForm>
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    public Contact contact;
+
+    protected override async Task OnInitializedAsync()
+    {
+        contact = await _contactService.GetContactDetails(Id);
+    }
+
+    protected async Task Delete()
+    {
+        await _contactService.DeleteContact(Id);
+        _navigationManager.NavigateTo("/");
+    }
+
+    private void NavigateHome()
+    {
+        _navigationManager.NavigateTo("/");
+    }
+
+}
